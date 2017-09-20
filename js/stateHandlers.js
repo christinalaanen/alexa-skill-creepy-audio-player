@@ -20,8 +20,8 @@ var stateHandlers = {
             //  Change state to START_MODE
             this.handler.state = constants.states.START_MODE;
 
-            var message = 'Welcome to the AWS Podcast. You can say, play the audio to begin the podcast.';
-            var reprompt = 'You can say, play the audio, to begin.';
+            var message = 'Welcome to Creepy Audio. You can say "Play the Audio" to begin the music. At any time, you can say Loop to loop the playlist or Stop to end your session.';
+            var reprompt = 'You can say "Play the Audio" to begin the music. At any time, you can say Loop to loop the playlist or Stop to end your session.';
 
             this.response.speak(message).listen(reprompt);
             this.emit(':responseReady');
@@ -41,7 +41,7 @@ var stateHandlers = {
             controller.play.call(this);
         },
         'AMAZON.HelpIntent' : function () {
-            var message = 'Welcome to the AWS Podcast. You can say, play the audio, to begin the podcast.';
+            var message = 'Welcome to Creepy Audio. You can say "Play the Audio" to begin the music. At any time, you can say Loop to loop the playlist or Stop to end your session.';
             this.response.speak(message).listen(message);
             this.emit(':responseReady');
         },
@@ -59,7 +59,7 @@ var stateHandlers = {
             // No session ended logic
         },
         'Unhandled' : function () {
-            var message = 'Sorry, I could not understand. Please say, play the audio, to begin the audio.';
+            var message = 'Sorry, I could not understand. Please say "Play the audio" to begin the music.';
             this.response.speak(message).listen(message);
             this.emit(':responseReady');
         }
@@ -82,13 +82,13 @@ var stateHandlers = {
             var reprompt;
             if (this.attributes['playbackFinished']) {
                 this.handler.state = constants.states.START_MODE;
-                message = 'Welcome to the AWS Podcast. You can say, play the audio to begin the podcast.';
-                reprompt = 'You can say, play the audio, to begin.';
+                message = 'Welcome to Creepy Audio. You can say "Play the Audio" to begin the music. At any time, you can say Loop to loop the playlist or Stop to end your session.';
+                reprompt = 'You can say "Play the Audio" to begin the music. At any time, you can say Loop to loop the playlist or Stop to end your session.';
             } else {
                 this.handler.state = constants.states.RESUME_DECISION_MODE;
                 message = 'You were listening to ' + audioData[this.attributes['playOrder'][this.attributes['index']]].title +
-                    ' Would you like to resume?';
-                reprompt = 'You can say yes to resume or no to play from the top.';
+                    ' ... ... Would you like to resume? Say Yes to resume or No to play from the top of the playlist.';
+                reprompt = 'You can say Yes to resume or No to play from the top.';
             }
 
             this.response.speak(message).listen(reprompt);
@@ -98,8 +98,16 @@ var stateHandlers = {
         'AMAZON.NextIntent' : function () { controller.playNext.call(this) },
         'AMAZON.PreviousIntent' : function () { controller.playPrevious.call(this) },
         'AMAZON.PauseIntent' : function () { controller.stop.call(this) },
-        'AMAZON.StopIntent' : function () { controller.stop.call(this) },
-        'AMAZON.CancelIntent' : function () { controller.stop.call(this) },
+        'AMAZON.StopIntent' : function () {
+            controller.stop.call(this);
+			var message = 'Good bye.';
+            this.response.speak(message);
+            this.emit('SessionEndedRequest'); },
+        'AMAZON.CancelIntent' : function () {             
+			controller.stop.call(this);
+			var message = 'Good bye.';
+            this.response.speak(message);
+            this.emit('SessionEndedRequest'); },
         'AMAZON.ResumeIntent' : function () { controller.play.call(this) },
         'AMAZON.LoopOnIntent' : function () { controller.loopOn.call(this) },
         'AMAZON.LoopOffIntent' : function () { controller.loopOff.call(this) },
@@ -108,7 +116,7 @@ var stateHandlers = {
         'AMAZON.StartOverIntent' : function () { controller.startOver.call(this) },
         'AMAZON.HelpIntent' : function () {
             // This will called while audio is playing and a user says "ask <invocation_name> for help"
-            var message = 'You are listening to the AWS Podcast. You can say, Next or Previous to navigate through the playlist. ' +
+            var message = 'You are listening to Creepy Audio. You can say, Next or Previous to navigate through the playlist. ' +
                 'At any time, you can say Pause to pause the audio and Resume to resume.';
             this.response.speak(message).listen(message);
             this.emit(':responseReady');
@@ -147,7 +155,7 @@ var stateHandlers = {
         'AMAZON.HelpIntent' : function () {
             var message = 'You were listening to ' + audioData[this.attributes['index']].title +
                 ' Would you like to resume?';
-            var reprompt = 'You can say yes to resume or no to play from the top.';
+            var reprompt = 'You can say Yes to resume or No to play from the top.';
             this.response.speak(message).listen(reprompt);
             this.emit(':responseReady');
         },
